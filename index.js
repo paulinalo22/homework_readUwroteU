@@ -1,8 +1,8 @@
 const inquirer = require("inquirer");
 const fs = require('fs');
 const axios = require("axios");
-const markdown = require('./utils/generateMarkdown')
-​
+const generate = require('./utils/generateMarkdown');
+
 const questions = [
     {
         type: "input",
@@ -17,71 +17,72 @@ const questions = [
     {
         type: "input",
         name: "description",
-        message: "Can you tell me more about your project? Describe it.",
+        message: "Can you tell me more about your project? Describe it in detail."
     },
     {
         type: "input",
-        name: "contents",
-        message: "Please list your table of contents here",
-    },
-    {
-        type: "input",
-        name: "installations",
-        message: "Please type the installation instructions",
+        name: "installation",
+        message: "Provide installation instructions, my friend."
     },
     {
         type: "input",
         name: "usage",
-        message: "Please type the project usage",
+        message: "Can you provide the project usage :D"
     },
     {
         type: "input",
         name: "license",
-        message: "Please type the project license",
+        message: "Oh yeah, here is the part in which you provide the license (it can also de a badge)"
     },
     {
         type: "input",
         name: "contributing",
-        message: "Please type the contributing parties",
+        message: "Is there anyone/anything you would like to add as contributor?"
     },
     {
         type: "input",
-        name: "tests",
-        message: "What tests did you perform for your project?",
+        name: "test",
+        message: "Here you can tell me more about all that important testing you did (tests)"
     },
     {
         type: "input",
-        name: "userName",
-        message: "What is your github username",
-    }
-]
-​
-inquirer.prompt(questions).then(function(data){
-    console.log(data.title);
-    console.log(data.description);
-    console.log(data.contents);
-    console.log(data.installations);
-    console.log(data.contributing);
-    console.log(data.tests);
-    console.log(data.userName);
-​
+        name: "username",
+        message: "Github username:"
+    },
+    {
+        type: "input",
+        name: "repo",
+        message: "One last thing, type/paste the repo link :)"
+    },
+];
+
+inquirer
+    .prompt(questions)
+    .then(function(data){
+        const queryUrl = `https://api.github.com/users/${data.username}`;
+
+        axios.get(queryUrl).then(function(res) {
+            
+            const githubInfo = {
+                githubImage: res.data.avatar_url,
+                email: res.data.email,
+                profile: res.data.html_url,
+                name: res.data.name
+            };
+            
+          fs.writeFile("README.md", generate(data, githubInfo), function(err) {
+            if (err) {
+              throw err;
+            };
+    
+            console.log("New README file created with success!");
+          });
+        });
+
 });
-​
-​
-​//axios
-    //getUser (userName)
-  //.get(`https://api.github.com/users/${username}`)
-  //.then(function(res) {
-   // console.log(res.data);
- // });
-​
-function writeToFile(filename, data) {
-    markdown();
-    console.log("running");
-}
-writeToFile();
+
 function init() {
-​
+
 }
-​
+
 init();
