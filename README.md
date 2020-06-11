@@ -30,7 +30,7 @@ This is a README example to illustrate the functionality of this app.
 
 ## Installation
 
-        nmp install
+        npm install
 
 ## Usage
 
